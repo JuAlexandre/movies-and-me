@@ -8,8 +8,12 @@
   },
   "dependencies": {
     "expo": "^32.0.0",
+    "moment": "^2.24.0",
+    "numeral": "^2.0.6",
     "react": "16.5.0",
-    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz"
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-gesture-handler": "^1.0.16",
+    "react-navigation": "^3.3.2"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0"
