@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, Text, ActivityIndicator, ScrollView, Image} from 'react-native';
+import {StyleSheet, View, Text, ActivityIndicator, ScrollView, Image, TouchableOpacity} from 'react-native';
 import moment from 'moment';
 import numeral from 'numeral';
+import {connect} from 'react-redux';
 
 import {getFilmDetailFromApi, getImageFromApi} from '../API/TMDBApi';
+import icFavorite from '../Images/ic_favorite.png';
+import icFavoriteBorder from '../Images/ic_favorite_border.png';
 
-export default class FilmDetail extends Component {
+class FilmDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -22,6 +25,19 @@ export default class FilmDetail extends Component {
                     isLoading: false,
                 })
             });
+    }
+
+    toggleFavorite() {
+        const action = {type: 'TOGGLE_FAVORITE', value: this.state.film};
+        this.props.dispatch(action);
+    }
+
+    displayFavoriteImage() {
+        if (this.props.favoritesFilm.findIndex(item => item.id === this.state.film.id) !== -1) {
+            return <Image style={styles.favoriteImage} source={icFavorite} />
+        } else {
+            return <Image style={styles.favoriteImage} source={icFavoriteBorder} />
+        }
     }
 
     renderLoading() {
@@ -44,6 +60,11 @@ export default class FilmDetail extends Component {
                         source={{uri: getImageFromApi(film.backdrop_path)}}
                     />
                     <Text style={styles.title}>{film.title}</Text>
+                    <TouchableOpacity
+                        style={styles.favorite}
+                        onPress={() => this.toggleFavorite()}>
+                        {this.displayFavoriteImage()}
+                    </TouchableOpacity>
                     <Text style={styles.description}>{film.overview}</Text>
                     <Text style={styles.default}>
                         Sorti le {moment(new Date(film.release_date)).format('DD/MM/YYYY')}
@@ -75,6 +96,12 @@ export default class FilmDetail extends Component {
         )
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        favoritesFilm: state.favoritesFilm,
+    }
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -118,5 +145,14 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         marginRight: 5,
         marginTop: 5,
+    },
+    favorite: {
+        alignItems: 'center',
+    },
+    favoriteImage: {
+        width: 40,
+        height: 40
     }
 });
+
+export default connect(mapStateToProps)(FilmDetail);
