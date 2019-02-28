@@ -13,17 +13,24 @@ class FilmDetail extends Component {
         super(props);
         this.state = {
             film: undefined,
-            isLoading: true,
+            isLoading: false,
         }
     }
 
     componentDidMount() {
+        const favoriteFilmIndex = this.props.favoritesFilm.findIndex(item => item.id === this.props.navigation.getParam('idFilm'));
+        if (favoriteFilmIndex !== -1) {
+            this.setState({film: this.props.favoritesFilm[favoriteFilmIndex]});
+            return;
+        }
+
+        this.setState({isLoading: true});
         getFilmDetailFromApi(this.props.navigation.getParam('idFilm'))
             .then(data => {
                 this.setState({
                     film: data,
                     isLoading: false,
-                })
+                });
             });
     }
 

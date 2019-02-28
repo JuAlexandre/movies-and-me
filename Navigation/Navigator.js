@@ -1,7 +1,12 @@
-import {createStackNavigator, createAppContainer} from 'react-navigation';
+import React from 'react';
+import {StyleSheet, Image} from 'react-native';
+import {createStackNavigator, createBottomTabNavigator, createAppContainer} from 'react-navigation';
 
 import Search from '../Components/Search';
 import FilmDetail from '../Components/FilmDetail';
+import Favorites from '../Components/Favorites';
+import icSearch from '../Images/ic_search.png';
+import icFavorite from '../Images/ic_favorite.png';
 
 const SearchStackNavigator = createStackNavigator({
     Search: {
@@ -15,4 +20,47 @@ const SearchStackNavigator = createStackNavigator({
     }
 });
 
-export default createAppContainer(SearchStackNavigator);
+const FavoritesStackNavigator = createStackNavigator({
+    Favorites: {
+        screen: Favorites,
+        navigationOptions: {
+            title: 'Favoris'
+        }
+    },
+    FilmDetail: {
+        screen: FilmDetail
+    }
+});
+
+const MoviesTabNavigator = createBottomTabNavigator(
+    {
+        Search: {
+            screen: SearchStackNavigator,
+            navigationOptions: {
+                tabBarIcon: () => <Image source={icSearch} style={styles.icon} />
+            }
+        },
+        Favorites: {
+            screen: FavoritesStackNavigator,
+            navigationOptions: {
+                tabBarIcon: () => <Image source={icFavorite} style={styles.icon} />
+            }
+        }
+    },
+    {
+        tabBarOptions: {
+            activeBackgroundColor: '#DDDDDD',
+            inactiveBackgroundColor: '#FFFFFF',
+            showLabel: false,
+            showIcon: true
+        }
+    });
+
+const styles = StyleSheet.create({
+    icon: {
+        width: 30,
+        height: 30
+    }
+});
+
+export default createAppContainer(MoviesTabNavigator);

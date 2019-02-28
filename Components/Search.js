@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {StyleSheet, View, TextInput, Button, FlatList, ActivityIndicator} from 'react-native';
+import {StyleSheet, View, TextInput, Button, ActivityIndicator} from 'react-native';
 import {connect} from 'react-redux';
 
-import FilmItem from './FilmItem';
 import {getFilmsFromApiWithSearchedText} from '../API/TMDBApi';
+import FilmList from './FilmList';
 
 class Search extends Component {
     constructor(props) {
@@ -30,7 +30,7 @@ class Search extends Component {
         );
     }
 
-    loadFilms() {
+    loadFilms = () => {
         if (this.searchedText.length > 0) {
             this.setState({isLoading: true});
             getFilmsFromApiWithSearchedText(this.searchedText, this.page + 1)
@@ -43,7 +43,7 @@ class Search extends Component {
                     });
                 });
         }
-    }
+    };
 
     detailForFilm = idFilm => {
         this.props.navigation.navigate('FilmDetail', {idFilm: idFilm});
@@ -69,21 +69,13 @@ class Search extends Component {
                     onSubmitEditing={() => this.loadFilms()}
                 />
                 <Button title='Rechercher' onPress={() => this.searchFilms()} />
-                <FlatList
-                    data={this.state.films}
-                    keyExtractor={(item) => item.id.toString()}
-                    renderItem={({item}) =>
-                        <FilmItem film={item}
-                                  isFavorite={(this.props.favoritesFilm.findIndex(film => film.id === item.id) !== -1)}
-                                  detailForFilm={this.detailForFilm}
-                        />
-                    }
-                    onEndReachedThreshold={0.5}
-                    onEndReached={() => {
-                        if (this.page < this.totalPages) {
-                            this.loadFilms();
-                        }
-                    }}
+                <FilmList
+                    films={this.state.films}
+                    navigation={this.props.navigation}
+                    loadFilms={this.loadFilms}
+                    page={this.page}
+                    totalPages={this.totalPages}
+                    favoriteList={false}
                 />
                 {this.renderLoading()}
             </View>
